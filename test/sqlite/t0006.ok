@@ -1,0 +1,22 @@
+
+[34m- Inspecting ./t0006[m
+
+[33mpatch ./t0006/patch1.sql:[m
+Changes in the file ./t0006/patch1.sql. Searching in git hash md5 b23321987651c1ea211a76c774cb5914
+Limited to 100 revs
+
+comparing file ./t0006/patch1.sql
+between 742f1e5c915baf989b1c331681b4055a761418b7 and 6809149e893fbdfe643724df1090497d0956b19b(HEAD)
+
+command: git -C . diff --color --word-diff --ignore-blank-lines -w -b --ignore-space-at-eol 742f1e5c915baf989b1c331681b4055a761418b7 6809149e893fbdfe643724df1090497d0956b19b -- ./t0006/patch1.sql
+[1mdiff --git c/test/sqlite/t0006/patch1.sql w/test/sqlite/t0006/patch1.sql[m
+[1mindex 2160c04..fc1f7fc 100644[m
+[1m--- c/test/sqlite/t0006/patch1.sql[m
+[1m+++ w/test/sqlite/t0006/patch1.sql[m
+[36m@@ -1,3 +1,3 @@[m
+create table memos(text, priority INTEGER);[m
+insert into memos values('deliver project description', 10);[m
+insert into memos values('lunch with [31m[-Christine',-][m[32m{+Fabiola',+}[m 100);
+
+[34m- Update completed[m
+

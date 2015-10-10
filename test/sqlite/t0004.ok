@@ -1,0 +1,9 @@
+
+[34m- Inspecting ./t0004[m
+
+[33mpatch ./t0004/patch1.sql:[m
+
+[32m   patch ./t0004/patch1.sql is updated on t0004/test.db[m
+
+[34m- Update completed[m
+

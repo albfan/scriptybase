@@ -1,0 +1,16 @@
+wrong number of arguments
+   scriptybase Help you keep your database uptodate
+   
+      -t, --database-type     Choose database
+      -d, --database-name     database name or connection url
+      -r, --root              project root
+      -p, --patch-dir         relative path from project root to patches
+      -a, --auto              Autoresponse. (batch mode)
+          --check             Chek if scriptybase is installed
+          --init              Initialize scriptybase stuff
+     
+   Examples:
+   
+   $ scriptybase -t sqlite -d test.db -r . -p patches
+
+      Unknown type wrong

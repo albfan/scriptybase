@@ -40,7 +40,11 @@ function configSqlProgram() {
       UPDATE_FILE_PATCH_COMMAND='echo "UPDATE $UPDATE_TABLE SET md5sum='"'"'$MD5'"'"',stamp='"'"'now'"'"' WHERE path='"'"'$FILE'"'"';" | $PROGRAM -bail $DATABASE_NAME'
       CHECK_COMMAND='echo .tables | $PROGRAM $DATABASE_NAME | grep $UPDATE_TABLE'
    else
-      PROGRAM=sqlworkbenchcmd
+      #PROGRAM=sqlworkbenchcmd
+      cat <<- EOF
+      Unknown type $DATABASE_TYPE
+EOF
+      exit 1
    fi
 }
 
@@ -116,26 +120,28 @@ EOF
    if [ "$count" == "0" ]
    then
       UPDATE=1
-      echo new script
+      echo "   new script"
       echo
       if [ -z "$AUTO" ]
       then
-         read -p "Do you want to see the new file $FILE (Y/[N])?" SHOWFILE
+         read -p "Do you want to see the new file $FILE (Y/[N])? " SHOWFILE
+         echo
       else
          SHOWFILE=$AUTO
       fi
       if [ "$SHOWFILE" == "Y" ]
       then
+         echo --
          echo -- $FILE
          echo --
-         echo
          cat "$FILE"
+         echo
       fi
 
-      echo
       if [ -z "$AUTO" ]
       then
-         read -p "Do you want to upgrade the new file $FILE (Y/[N])?" PASSFILE
+         read -p "Do you want to upgrade the new file $FILE (Y/[N])? " PASSFILE
+         echo
       else
          PASSFILE=$AUTO
       fi
@@ -147,7 +153,6 @@ EOF
             error
          fi
       fi 
-      echo
       MD5=$(md5sum "$FILE" | awk '{print $1}')
    else
       if [ "$count" == "1" ] 
@@ -159,35 +164,36 @@ EOF
          then
             echo
             colorecho 32 "   patch $FILE is updated on $DATABASE_NAME"
+            echo
          else
             echo Changes in the file $FILE. Searching in git hash md5 $DATA_MD5
             #TODO: Config
             echo Limited to 100 revs
-            for $x in $(seq 0 1 100) 
+            echo
+            for x in $(seq 0 1 100) 
             do 
-               MD5_GIT=$(git -C $ROOT show HEAD~$x:./$FILE | md5sum | awk "{print $1}")
+               MD5_GIT=$(git -C $ROOT show HEAD~$x:./$FILE 2>/dev/null | md5sum | awk '{print $1}')
                if [ "$MD5_GIT" == "$DATA_MD5" ] 
                then
-                  #git -C $ROOT log -n1 HEAD~$x --decorate --color
-                  #git -C $ROOT rev-parse HEAD~$x
-
                   #TODO: Extract differences without +, - and @@
                   echo comparing file $FILE 
                   HEAD_HASH=$(git -C $ROOT rev-parse HEAD)
                   UPTODATE_HASH=$(git -C $ROOT rev-parse HEAD~$x)
-                  echo "between $UPTODATE_HASH and $HEAD_HASH(HEAD)"
+                  echo "between $UPTODATE_HASH and (HEAD)"
                   echo
-                  echo command: git -C $ROOT diff --ignore-blank-lines -w -b --ignore-space-at-eol $UPTODATE_HASH $HEAD_HASH -- $FILE 
-                  git --no-pager -C $ROOT diff --ignore-blank-lines -w -b --ignore-space-at-eol HEAD~$x -- $FILE 
+                  echo command: git -C $ROOT diff --color --word-diff --ignore-blank-lines -w -b --ignore-space-at-eol $UPTODATE_HASH HEAD -- $FILE 
+                  git --no-pager -C $ROOT diff --color --word-diff --ignore-blank-lines -w -b --ignore-space-at-eol $UPTODATE_HASH HEAD -- $FILE 
+                  echo
                   UPDATE=1
                   break
                fi
             done
             #If UPDATE is not assigned original file was not founded which is a problem
-            if [ "$UPDATE" neq "1" ]
+            if [ "$UPDATE" != "1" ]
             then
                echo Updated file not found
-               return
+               echo
+               exit 1
             fi 
          fi 
       else
@@ -200,14 +206,13 @@ EOF
          return
       fi 
    fi 
-   echo 
    if [ "$UPDATE" == "1" ]
    then
       #TODO: This should be passed to a function
-      echo
       if [ -z "$AUTO" ]
       then
-         read -p "Was the file updated (Y/[N])?" ISUPDATED
+         read -p "Was the file updated (Y/[N])? " ISUPDATED
+         echo
       else
          ISUPDATED=$AUTO
       fi
@@ -221,14 +226,16 @@ EOF
             echo updated hash $MD5 in file $FILE
             eval $UPDATE_FILE_PATCH_COMMAND
          fi 
+         echo
       fi 
    fi 
 done
 }
 
 function help() {
+   scriptname=$(basename $(readlink -f $0) .sh )
    cat <<- EOF
-   $0 Help you keep your database uptodate
+   $scriptname Help you keep your database uptodate
    
       -t, --database-type     Choose database
       -d, --database-name     database name or connection url
@@ -240,7 +247,7 @@ function help() {
      
    Examples:
    
-   $ $0 -t sqlite -d test.db -r . -p patches
+   $ $scriptname -t sqlite -d test.db -r . -p patches
 
 EOF
 }
