@@ -1,12 +1,17 @@
 #!/bin/bash
 
 #set -xv
+
+function colorecho() {
+   echo -e "\x1b[$1m$2\x1b[m"
+}
+
 OK=0
 VERBOSE=0
 
 for test in t*.sh
 do
-   STATUS="ok"
+   STATUS="$(colorecho 32 ok)"
    title=$(grep "###" $test | sed 's/^###\s*//')
    basenametest="$(basename $test .sh)"
    #create sandbox
@@ -19,7 +24,7 @@ do
    then
       echo "$test failed" >> suite.log
       OK=1
-      STATUS="failed"
+      STATUS="$(colorecho 31 failed)"
    fi
    rm -rf $SANDBOX_DIR
 

@@ -1,0 +1,22 @@
+
+[34m- Inspecting ./t0007[m
+
+[33mpatch ./t0007/patch1.sql:[m
+Changes in the file ./t0007/patch1.sql. Searching in git hash md5 b423b7eb373e27e498920359374e4d46
+Limited to 100 revs
+
+               Updated file not found
+
+               scriptybase cannot help you this time.
+               
+               Try to generate a clone BD, to extract the differences from actual 
+                  database to supposed database from scripts
+
+               Many times there's no changes or are really naive so all you have to
+                  do is patch sql file or force update in scriptybase changelog table
+ See real file applied was
+
+ b423b7eb373e27e498920359374e4d46  t0007/patch1.sql.manual
+
+ If you find yourself in this situation, 
+    locate the guilty and cut this hands
