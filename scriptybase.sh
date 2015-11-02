@@ -191,8 +191,17 @@ EOF
             #If UPDATE is not assigned original file was not founded which is a problem
             if [ "$UPDATE" != "1" ]
             then
-               echo Updated file not found
-               echo
+               cat <<EOF
+               Updated file not found
+
+               $scriptname cannot help you this time.
+               
+               Try to generate a clone BD, to extract the differences from actual 
+                  database to supposed database from scripts
+
+               Many times there's no changes or are really naive so all you have to
+                  do is patch sql file or force update in $scriptname changelog table
+EOF
                exit 1
             fi 
          fi 
@@ -233,7 +242,6 @@ done
 }
 
 function help() {
-   scriptname=$(basename $(readlink -f $0) .sh )
    cat <<- EOF
    $scriptname Help you keep your database uptodate
    
@@ -256,6 +264,8 @@ function colorecho() {
    echo -e "\x1b[$1m$2\x1b[m"
 }
 #}}}
+
+scriptname="$(basename $(readlink -f $0) .sh )"
 
 if [ $# == 0 ]
 then
